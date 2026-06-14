@@ -1,0 +1,10 @@
+﻿<Window x:Class="PuntoVenta2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Punto de Venta" 
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
+    <!-- QUITA Height y Width fijos aquí también -->
+
+    <!-- Vacío - el contenido se asigna desde código -->
+</Window>

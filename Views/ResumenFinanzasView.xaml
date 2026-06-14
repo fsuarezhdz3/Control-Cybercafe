@@ -1,0 +1,340 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl x:Class="PuntoVenta2.Views.ResumenFinanzasView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <Style x:Key="NavBtn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Margin" Value="8,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="FiltroButton" TargetType="Button">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Margin" Value="5,0"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="#2C2C2C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="RegresarButton" TargetType="Button">
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Width" Value="180"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="#666666"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#3E3E3E">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- BARRA DE NAVEGACIÓN -->
+        <Border Background="Black" Grid.Row="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- IZQUIERDA: ICONOS -->
+                <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    Margin="15,0"
+                    Grid.Column="0">
+                    <Button Style="{StaticResource NavBtn}" Click="BtnOrdenes_Click">
+                        <Image Source="/Images/ordenes.png" Width="26" Height="26"/>
+                    </Button>
+                    <Button Style="{StaticResource NavBtn}" Click="BtnTiempos_Click">
+                        <Image Source="/Images/tiempos.png" Width="26" Height="26"/>
+                    </Button>
+                </StackPanel>
+
+                <!-- CENTRO: TÍTULO -->
+                <TextBlock Text="Resumen Financiero"
+                       Foreground="White"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Grid.Column="1"/>
+
+                <!-- DERECHA: ICONOS -->
+                <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    Margin="0,0,15,0"
+                    Grid.Column="2">
+                    <Button Style="{StaticResource NavBtn}" Click="BtnResumen_Click">
+                        <Image Source="/Images/resumen.png" Width="26" Height="26"/>
+                    </Button>
+                    <Button Style="{StaticResource NavBtn}" Click="BtnCuenta_Click">
+                        <Image Source="/Images/cuenta.png" Width="26" Height="26"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- PANEL DE FILTROS (SOLO PARA ADMIN) -->
+        <Border x:Name="PanelFiltrosAdmin"
+                Grid.Row="1"
+                Background="#2C2C2C"
+                Margin="20,15,20,10"
+                Padding="15"
+                CornerRadius="8"
+                Visibility="Visible">
+            <StackPanel>
+                <TextBlock Text="Filtrar por período:"
+                           Foreground="White"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Margin="0,0,0,10"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button x:Name="BtnHoy" 
+                            Style="{StaticResource FiltroButton}"
+                            Content="Hoy"
+                            Click="BtnFiltrarHoy_Click"/>
+
+                    <Button x:Name="BtnAyer"
+                            Style="{StaticResource FiltroButton}"
+                            Content="Ayer"
+                            Click="BtnFiltrarAyer_Click"/>
+
+                    <Button x:Name="BtnSemana"
+                            Style="{StaticResource FiltroButton}"
+                            Content="Esta semana"
+                            Click="BtnFiltrarSemana_Click"/>
+
+                    <Button x:Name="BtnMes"
+                            Style="{StaticResource FiltroButton}"
+                            Content="Este mes"
+                            Click="BtnFiltrarMes_Click"/>
+
+                    <Button x:Name="BtnAnio"
+                            Style="{StaticResource FiltroButton}"
+                            Content="Este año"
+                            Click="BtnFiltrarAnio_Click"/>
+
+                    <Button x:Name="BtnTodo"
+                            Style="{StaticResource FiltroButton}"
+                            Content="Todo"
+                            Click="BtnFiltrarTodo_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- TABLA DE FINANZAS -->
+        <Border Grid.Row="2" Margin="40,0,40,20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- TÍTULO -->
+                <Border Grid.Row="0" Background="#1E1E1E" Padding="15" CornerRadius="8,8,0,0">
+                    <TextBlock Text="Estado Financiero"
+                               Foreground="White"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"/>
+                </Border>
+
+                <!-- TABLA -->
+                <Border Grid.Row="1" Background="#2C2C2C" Padding="0" CornerRadius="0,0,8,8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="80"/>
+                            <RowDefinition Height="80"/>
+                            <RowDefinition Height="80"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- FILA 1: VENTAS TOTALES (NO CLICKABLE) -->
+                        <Border Grid.Row="0"
+                                Background="#2C2C2C"
+                                BorderBrush="#555555"
+                                BorderThickness="0,0,0,1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+                                    <TextBlock Text="💰"
+                                               Foreground="#4CAF50"
+                                               FontSize="24"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,15,0"/>
+                                    <TextBlock Text="Ventas Totales"
+                                               Foreground="White"
+                                               FontSize="18"
+                                               FontWeight="Bold"/>
+                                </StackPanel>
+                                <TextBlock x:Name="TxtVentasTotales"
+                                           Text="$0"
+                                           Foreground="#4CAF50"
+                                           FontSize="24"
+                                           FontWeight="Bold"
+                                           Grid.Column="1"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Right"
+                                           Margin="0,0,20,0"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- FILA 2: GASTOS (NO CLICKABLE) -->
+                        <Border Grid.Row="1"
+                                Background="#2C2C2C"
+                                BorderBrush="#555555"
+                                BorderThickness="0,0,0,1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+                                    <TextBlock Text="📉"
+                                               Foreground="#FF5722"
+                                               FontSize="24"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,15,0"/>
+                                    <TextBlock Text="Gastos Totales"
+                                               Foreground="White"
+                                               FontSize="18"
+                                               FontWeight="Bold"/>
+                                </StackPanel>
+                                <TextBlock x:Name="TxtGastosTotales"
+                                           Text="$0"
+                                           Foreground="#FF5722"
+                                           FontSize="24"
+                                           FontWeight="Bold"
+                                           Grid.Column="1"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Right"
+                                           Margin="0,0,20,0"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- FILA 3: GANANCIAS (NO CLICKABLE) -->
+                        <Border Grid.Row="2"
+                                Background="#2C2C2C"
+                                BorderBrush="#555555"
+                                BorderThickness="0,0,0,1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+                                    <TextBlock Text="📈"
+                                               Foreground="#FFC107"
+                                               FontSize="24"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,15,0"/>
+                                    <TextBlock Text="Ganancias Netas"
+                                               Foreground="White"
+                                               FontSize="18"
+                                               FontWeight="Bold"/>
+                                </StackPanel>
+                                <TextBlock x:Name="TxtGananciasNetas"
+                                           Text="$0"
+                                           Foreground="#FFC107"
+                                           FontSize="24"
+                                           FontWeight="Bold"
+                                           Grid.Column="1"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Right"
+                                           Margin="0,0,20,0"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- INFORMACIÓN ADICIONAL -->
+        <Border Grid.Row="3"
+                Background="#1F1F1F"
+                Margin="40,0,40,10"
+                Padding="20"
+                CornerRadius="8">
+            <StackPanel>
+                <TextBlock Text="Información Financiera"
+                           Foreground="#CCCCCC"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <StackPanel Margin="0,0,30,0">
+                        <TextBlock Text="Cortes en período:"
+                                   Foreground="#CCCCCC"
+                                   FontSize="12"/>
+                        <TextBlock x:Name="TxtCortesCerrados"
+                                   Text="0"
+                                   Foreground="White"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Margen de ganancia:"
+                                   Foreground="#CCCCCC"
+                                   FontSize="12"/>
+                        <TextBlock x:Name="TxtMargenGanancia"
+                                   Text="0%"
+                                   Foreground="#4CAF50"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="30,0,0,0">
+                        <TextBlock Text="Período:"
+                                   Foreground="#CCCCCC"
+                                   FontSize="12"/>
+                        <TextBlock x:Name="TxtPeriodo"
+                                   Text="Todo"
+                                   Foreground="#FF9800"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- BOTÓN REGRESAR -->
+        <Border Grid.Row="4"
+                Background="#1F1F1F"
+                Margin="40,0,40,20"
+                Padding="20"
+                CornerRadius="8">
+            <StackPanel HorizontalAlignment="Center">
+                <Button x:Name="BtnRegresar"
+                        Style="{StaticResource RegresarButton}"
+                        Content="← Regresar"
+                        Click="BtnRegresar_Click"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

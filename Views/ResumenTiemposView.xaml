@@ -1,0 +1,248 @@
+﻿<UserControl x:Class="PuntoVenta2.Views.ResumenTiemposView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <Style x:Key="NavBtn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Margin" Value="8,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="FiltroButton" TargetType="Button">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Margin" Value="5,0"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="#2C2C2C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="10"/>
+        </Style>
+
+        <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#1E1E1E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="0,0,1,2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#3E3E3E">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- BARRA DE NAVEGACIÓN -->
+        <Border Background="Black" Grid.Row="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- IZQUIERDA: ICONOS -->
+                <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    Margin="15,0"
+                    Grid.Column="0">
+                    <Button Style="{StaticResource NavBtn}" Click="BtnOrdenes_Click">
+                        <Image Source="/Images/ordenes.png" Width="26" Height="26"/>
+                    </Button>
+                    <Button Style="{StaticResource NavBtn}" Click="BtnTiempos_Click">
+                        <Image Source="/Images/tiempos.png" Width="26" Height="26"/>
+                    </Button>
+                </StackPanel>
+
+                <!-- CENTRO: TÍTULO -->
+                <TextBlock Text="Resumen de Tiempos"
+                       Foreground="White"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Grid.Column="1"/>
+
+                <!-- DERECHA: ICONOS -->
+                <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    Margin="0,0,15,0"
+                    Grid.Column="2">
+                    <Button Style="{StaticResource NavBtn}" Click="BtnResumen_Click">
+                        <Image Source="/Images/resumen.png" Width="26" Height="26"/>
+                    </Button>
+                    <Button Style="{StaticResource NavBtn}" Click="BtnCuenta_Click">
+                        <Image Source="/Images/cuenta.png" Width="26" Height="26"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- PANEL DE FILTROS (SOLO PARA ADMIN) -->
+        <Border x:Name="PanelFiltrosAdmin"
+                Grid.Row="1"
+                Background="#2C2C2C"
+                Margin="20,15,20,10"
+                Padding="15"
+                CornerRadius="8"
+                Visibility="Visible">
+            <StackPanel>
+                <TextBlock Text="Filtrar por período:"
+                           Foreground="White"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Margin="0,0,0,10"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button x:Name="BtnHoy" 
+                            Style="{StaticResource FiltroButton}"
+                            Content="Hoy"
+                            Click="BtnFiltrarHoy_Click"/>
+
+                    <Button x:Name="BtnAyer"
+                            Style="{StaticResource FiltroButton}"
+                            Content="Ayer"
+                            Click="BtnFiltrarAyer_Click"/>
+
+                    <Button x:Name="BtnSemana"
+                            Style="{StaticResource FiltroButton}"
+                            Content="Esta semana"
+                            Click="BtnFiltrarSemana_Click"/>
+
+                    <Button x:Name="BtnMes"
+                            Style="{StaticResource FiltroButton}"
+                            Content="Este mes"
+                            Click="BtnFiltrarMes_Click"/>
+
+                    <Button x:Name="BtnAnio"
+                            Style="{StaticResource FiltroButton}"
+                            Content="Este año"
+                            Click="BtnFiltrarAnio_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- TABLA DE RESUMEN -->
+        <Border Grid.Row="2" Margin="20,0,20,20">
+            <DataGrid x:Name="GridResumenTiempos"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      Background="#2C2C2C"
+                      Foreground="White"
+                      BorderBrush="#555555"
+                      HeadersVisibility="Column"
+                      RowHeaderWidth="0"
+                      GridLinesVisibility="Horizontal"
+                      CellStyle="{StaticResource DataGridCellStyle}">
+
+                <DataGrid.Columns>
+                    <!-- CONSOLA -->
+                    <DataGridTextColumn Header="Consola"
+                                        Binding="{Binding Consola}"
+                                        Width="*"
+                                        HeaderStyle="{StaticResource DataGridHeaderStyle}"/>
+
+                    <!-- TIEMPO TOTAL -->
+                    <DataGridTextColumn Header="Tiempo Total"
+                                        Binding="{Binding TiempoTotalStr}"
+                                        Width="*"
+                                        HeaderStyle="{StaticResource DataGridHeaderStyle}"/>
+
+                    <!-- DINERO GENERADO -->
+                    <DataGridTextColumn Header="Dinero"
+                                        Binding="{Binding Dinero, StringFormat=${0}}"
+                                        Width="*"
+                                        HeaderStyle="{StaticResource DataGridHeaderStyle}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#4CAF50"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <!-- FECHA (SOLO PARA FILTROS MULTIPLES DÍAS) -->
+                    <DataGridTextColumn x:Name="ColFecha"
+                                        Header="Fecha"
+                                        Binding="{Binding Fecha, StringFormat=yyyy-MM-dd}"
+                                        Width="*"
+                                        HeaderStyle="{StaticResource DataGridHeaderStyle}"
+                                        Visibility="Collapsed"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- TOTALES -->
+        <Border Grid.Row="3"
+                Background="#1F1F1F"
+                Margin="20,0,20,20"
+                Padding="20"
+                CornerRadius="8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- TOTAL DE TIEMPO -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Tiempo total usado:"
+                               Foreground="#CCCCCC"
+                               FontSize="14"/>
+                    <TextBlock x:Name="TxtTiempoTotal"
+                               Text="00:00:00"
+                               Foreground="White"
+                               FontSize="20"
+                               FontWeight="Bold"/>
+                </StackPanel>
+
+                <!-- TOTAL DE DINERO -->
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Dinero total generado:"
+                               Foreground="#CCCCCC"
+                               FontSize="14"/>
+                    <TextBlock x:Name="TxtDineroTotal"
+                               Text="$0"
+                               Foreground="#4CAF50"
+                               FontSize="20"
+                               FontWeight="Bold"/>
+                </StackPanel>
+
+                <!-- CONSOLAS ACTIVAS -->
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Período mostrado:"
+                               Foreground="#CCCCCC"
+                               FontSize="14"/>
+                    <TextBlock x:Name="TxtPeriodo"
+                               Text="Hoy"
+                               Foreground="#FF9800"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
