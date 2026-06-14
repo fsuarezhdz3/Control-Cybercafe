@@ -1,0 +1,186 @@
+﻿<UserControl x:Class="PuntoVenta2.Views.OrdenesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PuntoVenta2.Models"
+             xmlns:views="clr-namespace:PuntoVenta2.Views">
+
+    <UserControl.Resources>
+        <Style x:Key="NavBtn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Margin" Value="8,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#3E3E3E">
+        <!-- ========== CAPA PRINCIPAL ========== -->
+        <Grid x:Name="MainContent">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- BARRA DE NAVEGACIÓN -->
+            <Border Background="Black" Grid.Row="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- IZQUIERDA: ICONOS -->
+                    <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        Margin="15,0"
+                        Grid.Column="0">
+                        <Button Style="{StaticResource NavBtn}">
+                            <Image Source="/Images/ordenes.png" Width="26" Height="26"/>
+                        </Button>
+                        <Button Style="{StaticResource NavBtn}" Click="BtnTiempos_Click">
+                            <Image Source="/Images/tiempos.png" Width="26" Height="26"/>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- CENTRO: TÍTULO -->
+                    <TextBlock Text="Órdenes"
+                       Foreground="White"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Grid.Column="1"/>
+
+                    <!-- DERECHA: ICONOS -->
+                    <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        Margin="0,0,15,0"
+                        Grid.Column="2">
+                        <Button Style="{StaticResource NavBtn}" Click="BtnResumen_Click">
+                            <Image Source="/Images/resumen.png" Width="26" Height="26"/>
+                        </Button>
+                        <Button Style="{StaticResource NavBtn}" Click="BtnCuenta_Click">
+                            <Image Source="/Images/cuenta.png" Width="26" Height="26"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- BOTÓN AGREGAR -->
+            <Button Grid.Row="1"
+                    Content="Agregar orden"
+                    Height="45"
+                    Margin="20,10"
+                    FontSize="18"
+                    Background="#1E1E1E"
+                    Foreground="White"
+                    Click="BtnAgregarOrden_Click"/>
+
+            <!-- LISTA DE ÓRDENES -->
+            <ScrollViewer Grid.Row="2" Margin="20">
+                <ItemsControl ItemsSource="{Binding Ordenes}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#1F1F1F" CornerRadius="10" Padding="20" Margin="0,0,0,15">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding NumOrden, StringFormat=Orden #{0}}"
+                                               FontSize="20" FontWeight="Bold" Foreground="White"/>
+
+                                    <ItemsControl ItemsSource="{Binding Productos}" Margin="0,8">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <DockPanel>
+                                                    <TextBlock Text="{Binding Concepto}" FontSize="16" Foreground="White" DockPanel.Dock="Left"/>
+                                                    <TextBlock Text="{Binding Costo, StringFormat=${0}}" FontSize="16" Foreground="White" DockPanel.Dock="Right"/>
+                                                </DockPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <TextBlock Text="Comentarios:" Foreground="White" FontSize="16" FontWeight="Bold" Margin="0,10,0,0"/>
+                                    <TextBlock Text="{Binding Comentarios}" Foreground="White" FontSize="15" TextWrapping="Wrap"/>
+
+                                    <Button Content="Modificar orden" Margin="0,15,0,0" Height="40" FontSize="16"
+                                            Background="#2E2E2E" Foreground="White" Tag="{Binding NumOrden}" Click="ModificarOrden_Click"/>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,25,0,0">
+                                        <Button Content="Cobrar" Width="120" Height="40" FontSize="16"
+                                                Background="#4CAF50" Foreground="White" Tag="{Binding}" Click="BtnCobrar_Click"/>
+                                        <TextBlock Text="{Binding Total, StringFormat=Total: ${0}}" FontSize="18" FontWeight="Bold"
+                                                   Foreground="White" Margin="30,0,0,0" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- ========== MODAL OVERLAY ========== -->
+        <Grid x:Name="ModalOverlay" 
+              Background="#80000000" 
+              Visibility="Collapsed">
+
+            <!-- CONTENEDOR DEL MODAL -->
+            <Border HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="#3E3E3E"
+                    Width="1000"
+                    Height="700"
+                    CornerRadius="10">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- BARRA SUPERIOR DEL MODAL -->
+                    <Border Grid.Row="0" 
+                            Background="Black"
+                            Height="50"
+                            CornerRadius="10,10,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- TÍTULO CENTRADO -->
+                            <TextBlock Text="Agregar Nueva Orden"
+                                       Foreground="White"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Grid.Column="0"/>
+
+                            <!-- BOTÓN X A LA DERECHA -->
+                            <Button Content="✕"
+                                    Foreground="White"
+                                    Background="Transparent"
+                                    FontSize="18"
+                                    FontWeight="Bold"
+                                    BorderThickness="0"
+                                    Width="40"
+                                    Height="40"
+                                    Grid.Column="1"
+                                    Margin="0,0,10,0"
+                                    Click="BtnCerrarModal_Click"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- CONTENEDOR PARA EL USERCONTROL -->
+                    <Border x:Name="ModalContentContainer"
+                            Grid.Row="1" 
+                            Background="#3E3E3E">
+                        <!-- El contenido se asignará dinámicamente -->
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
