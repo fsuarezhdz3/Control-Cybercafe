@@ -1,0 +1,210 @@
+﻿<UserControl x:Class="PuntoVenta2.Views.EditarOrdenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PuntoVenta2.Models"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="ProductoBtn" TargetType="Button">
+            <Setter Property="Background" Value="#2C2C2C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <Style x:Key="EliminarBtn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="Red"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#3E3E3E">
+        <Grid.ColumnDefinitions>
+            <!-- Menú de productos -->
+            <ColumnDefinition Width="1.5*"/>
+            <!-- Línea divisoria -->
+            <ColumnDefinition Width="Auto"/>
+            <!-- Orden actual -->
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ========== MENÚ DE PRODUCTOS (IZQUIERDA) ========== -->
+        <Border Grid.Column="0" Margin="20">
+            <StackPanel>
+                <TextBlock Text="Menú"
+                           Foreground="White"
+                           FontSize="28"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,20"/>
+
+                <!-- Lista de productos -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Height="500">
+                    <ItemsControl ItemsSource="{Binding Productos}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#1F1F1F"
+                                        CornerRadius="8"
+                                        Padding="15,10"
+                                        Margin="0,0,0,10">
+                                    <DockPanel>
+                                        <!-- Nombre y precio -->
+                                        <StackPanel DockPanel.Dock="Left">
+                                            <TextBlock Text="{Binding Nombre}"
+                                                       Foreground="White"
+                                                       FontSize="16"/>
+                                            <TextBlock Text="{Binding Costo, StringFormat=${0}}"
+                                                       Foreground="#CCCCCC"
+                                                       FontSize="14"/>
+                                        </StackPanel>
+
+                                        <!-- Botón agregar -->
+                                        <Button Content="+"
+                                                DockPanel.Dock="Right"
+                                                Style="{StaticResource ProductoBtn}"
+                                                Width="40"
+                                                Tag="{Binding}"
+                                                Click="BtnAgregarProducto_Click"/>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+        </Border>
+
+        <!-- ========== LÍNEA DIVISORIA ========== -->
+        <Border Grid.Column="1" Width="2" Background="#555555"/>
+
+        <!-- ========== ORDEN ACTUAL (DERECHA) ========== -->
+        <Border Grid.Column="2" Margin="20,0,20,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Título con número de orden -->
+                <TextBlock Grid.Row="0"
+                           Text="{Binding TituloOrden, StringFormat=Editar Orden #{0}}"
+                           Foreground="White"
+                           FontSize="28"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,20"/>
+
+                <!-- Lista de productos actuales (con X para eliminar) -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Height="300">
+                    <ItemsControl ItemsSource="{Binding ProductosOrdenActual}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#1F1F1F"
+                                        CornerRadius="8"
+                                        Padding="15,10"
+                                        Margin="0,0,0,10">
+                                    <DockPanel>
+                                        <!-- Botón eliminar (X roja) -->
+                                        <Button Content="X"
+                                                Style="{StaticResource EliminarBtn}"
+                                                DockPanel.Dock="Left"
+                                                Tag="{Binding}"
+                                                Click="BtnEliminarDeOrden_Click"/>
+
+                                        <!-- Nombre y precio -->
+                                        <StackPanel Margin="10,0,0,0">
+                                            <TextBlock Text="{Binding Concepto}"
+                                                       Foreground="White"
+                                                       FontSize="16"/>
+                                            <TextBlock Text="{Binding Costo, StringFormat=${0}}"
+                                                       Foreground="#CCCCCC"
+                                                       FontSize="14"/>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!-- Total -->
+                <Border Grid.Row="2"
+                        Background="#2C2C2C"
+                        CornerRadius="8"
+                        Padding="15"
+                        Margin="0,20,0,0">
+                    <DockPanel>
+                        <TextBlock Text="Total:"
+                                   Foreground="White"
+                                   FontSize="20"
+                                   FontWeight="Bold"/>
+
+                        <TextBlock Text="{Binding Total, StringFormat=${0}}"
+                                   Foreground="#4CAF50"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   DockPanel.Dock="Right"/>
+                    </DockPanel>
+                </Border>
+
+                <!-- Comentarios -->
+                <StackPanel Grid.Row="3" Margin="0,20,0,0">
+                    <TextBlock Text="Comentarios:"
+                               Foreground="White"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               Margin="0,0,0,10"/>
+
+                    <TextBox x:Name="txtComentarios"
+                             Text="{Binding Comentarios, UpdateSourceTrigger=PropertyChanged}"
+                             Background="#2C2C2C"
+                             Foreground="White"
+                             BorderThickness="0"
+                             Height="80"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             AcceptsReturn="True"/>
+                </StackPanel>
+
+                <!-- Botones Cancelar y Guardar -->
+                <StackPanel Grid.Row="4" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Center"
+                            Margin="0,30,0,0">
+                    <Button Content="Cancelar"
+                            Height="50"
+                            Background="#666666"
+                            Foreground="White"
+                            FontSize="18"
+                            Width="150"
+                            Cursor="Hand"
+                            BorderThickness="0"
+                            Click="BtnCancelar_Click"
+                            Margin="0,0,20,0"/>
+
+                    <Button Content="Guardar Cambios"
+                            Height="50"
+                            Background="#4CAF50"
+                            Foreground="White"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Width="150"
+                            Cursor="Hand"
+                            BorderThickness="0"
+                            Click="BtnGuardarCambios_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
